@@ -1,7 +1,10 @@
-import NextAuth from "next-auth";
-import GitHubProvider from "next-auth/providers/github";
+// src/app/api/auth/[...nextauth]/route.ts
 
-export const authOptions = {
+import NextAuth from "next-auth/next";
+import GitHubProvider from "next-auth/providers/github";
+import { NextAuthOptions } from "next-auth";
+
+export const authOptions: NextAuthOptions = {
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID!,
@@ -12,11 +15,12 @@ export const authOptions = {
   session: { strategy: "jwt" },
   callbacks: {
     async session({ session, token }) {
-      session.user.id = token.sub;
+      session.user.id = token.sub!;
       return session;
     },
   },
 };
 
-const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
+// Для App Router обязательно экспортировать методы:
+export const GET  = NextAuth(authOptions);
+export const POST = NextAuth(authOptions);
